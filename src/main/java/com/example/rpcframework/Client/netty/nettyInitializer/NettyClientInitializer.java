@@ -1,6 +1,7 @@
 package com.example.rpcframework.Client.netty.nettyInitializer;
 
 import com.example.rpcframework.Client.netty.handler.NettyClientHandler;
+import com.example.rpcframework.Server.provider.ServiceProvider;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -9,8 +10,11 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.serialization.ClassResolver;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
+    private ServiceProvider serviceProvider;
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
@@ -30,6 +34,6 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
             }
         }));
 
-        pipeline.addLast(new NettyClientHandler());
+        pipeline.addLast(new NettyClientHandler(serviceProvider));
     }
 }
