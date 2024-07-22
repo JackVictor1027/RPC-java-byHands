@@ -6,8 +6,10 @@ import com.example.rpcframework.Server.server.RpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.sctp.nio.NioSctpServerChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class NettyRPCRPCServer implements RpcServer {
     private ServiceProvider serviceProvider;
     @Override
@@ -21,7 +23,7 @@ public class NettyRPCRPCServer implements RpcServer {
             //启动netty服务器
             ServerBootstrap serverBootstrap=new ServerBootstrap();
             serverBootstrap.group(bossGroup,workGroup)
-                    .channel(NioSctpServerChannel.class)
+                    .channel(NioServerSocketChannel.class)
                     //NettyClientInitializer这里 配置netty对消息的处理机制
                     .childHandler(new NettyServerInitializer(serviceProvider));
             //同步堵塞
