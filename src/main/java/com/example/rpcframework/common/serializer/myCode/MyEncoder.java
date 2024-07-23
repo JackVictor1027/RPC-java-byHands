@@ -1,5 +1,6 @@
 package com.example.rpcframework.common.serializer.myCode;
 
+import com.example.rpcframework.common.Message.MessageType;
 import com.example.rpcframework.common.Message.RpcRequest;
 import com.example.rpcframework.common.Message.RpcResponse;
 import com.example.rpcframework.common.serializer.mySerializer.Serializer;

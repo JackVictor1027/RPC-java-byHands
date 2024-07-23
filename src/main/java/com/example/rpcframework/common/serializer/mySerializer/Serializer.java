@@ -10,7 +10,7 @@ public interface Serializer {
     // 0:java自带序列化方式，1：json序列化方式
     int getType();
     //根据序号取出序列化器，暂时有两种实现方式，需要其他方式，实现这个接口即可
-    static Serializer getSerializerByType(int type){
+    static Serializer getSerializer(int type){
         switch (type){
             case 0:
                 return new ObjectSerializer();
