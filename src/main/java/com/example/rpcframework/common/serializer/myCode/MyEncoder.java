@@ -2,6 +2,7 @@ package com.example.rpcframework.common.serializer.myCode;
 
 import com.example.rpcframework.common.Message.RpcRequest;
 import com.example.rpcframework.common.Message.RpcResponse;
+import com.example.rpcframework.common.serializer.mySerializer.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -14,6 +15,9 @@ import java.awt.*;
 * */
 public class MyEncoder extends MessageToByteEncoder {
     private Serializer serializer;
+    public MyEncoder(Serializer serializer){
+        this.serializer=serializer;
+    }
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         System.out.println(msg.getClass());

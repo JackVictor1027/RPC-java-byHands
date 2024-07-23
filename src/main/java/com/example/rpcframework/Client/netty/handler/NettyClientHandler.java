@@ -6,7 +6,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @AllArgsConstructor
 public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     private ServiceProvider serviceProvider;
