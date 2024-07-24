@@ -1,5 +1,7 @@
 package com.example.rpcframework.Client.serviceCenter;
 
+import com.example.rpcframework.Client.cache.ServiceCache;
+import com.example.rpcframework.Client.serviceCenter.ZkWatcher.watchZK;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -13,6 +15,8 @@ public class ZKServiceCenter implements ServiceCenter{
     private CuratorFramework client;
     //zookeeper根路径节点
     public static final String ROOT_PATH = "MyRPC";
+    //serviceCache
+    private ServiceCache cache;
 
     //负责zookeeper客户端的初始化，并与zookeeper服务端进行连接
     public ZKServiceCenter(){
@@ -26,6 +30,13 @@ public class ZKServiceCenter implements ServiceCenter{
                 .sessionTimeoutMs(40000).retryPolicy(policy).namespace(ROOT_PATH).build();
         this.client.start();
         System.out.println("zookeeper 连接成功");
+
+        //初始化本地缓存
+        cache=new ServiceCache();
+        //加入zookeeper事件监听器
+        watchZK watcher = new watchZK(client, cache);
+        //监听启动
+        watcher.watchToUpdate(ROOT_PATH);
     }
 
     //根据服务名（接口名）返回地址
