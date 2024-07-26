@@ -21,7 +21,7 @@ public class NettyRpcClient implements RpcClient {
     private static final EventLoopGroup eventLoopGroup;
     private ServiceCenter serviceCenter;
 
-    public NettyRpcClient(){
+    public NettyRpcClient() throws InterruptedException{
         this.serviceCenter=new ZKServiceCenter();
     }
     //netty客户端初始化
@@ -52,7 +52,7 @@ public class NettyRpcClient implements RpcClient {
             //AttributeKey是，线程隔离的，不会有线程安全问题
             //当前场景下选择堵塞获取结果
             //其它场景也可以选择添加监听器的方式来异步获取结果，channelFuture.addListener...
-            AttributeKey<RpcResponse> key= AttributeKey.valueOf("RPCResponse");
+            AttributeKey<RpcResponse> key= AttributeKey.valueOf("RpcResponse");
             RpcResponse response = channel.attr(key).get();
 
             System.out.println(response);
