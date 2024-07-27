@@ -1,9 +1,12 @@
 package com.example.rpcframework.Client.proxy;
 
 import com.example.rpcframework.Client.IOClient;
+import com.example.rpcframework.Client.retry.GuavaRetry;
 import com.example.rpcframework.Client.rpcClient.Impl.NettyRpcClient;
 import com.example.rpcframework.Client.rpcClient.Impl.SimpleSocketRpcCilent;
 import com.example.rpcframework.Client.rpcClient.RpcClient;
+import com.example.rpcframework.Client.serviceCenter.ServiceCenter;
+import com.example.rpcframework.Client.serviceCenter.ZKServiceCenter;
 import com.example.rpcframework.Server.server.Impl.SimpleRPCRPCServer;
 import com.example.rpcframework.common.Message.RpcRequest;
 import com.example.rpcframework.common.Message.RpcResponse;
@@ -18,10 +21,12 @@ import java.lang.reflect.Proxy;
 public class ClientProxy implements InvocationHandler {
     //传入参数service接口的class对象，反射封装成一个request
     private RpcClient rpcClient;
+    private ServiceCenter serviceCenter;
     public ClientProxy() throws InterruptedException {
         // 初始化 RpcClient，并处理可能的异常
         try {
-            this.rpcClient = new NettyRpcClient();
+            serviceCenter=new ZKServiceCenter();
+            this.rpcClient=new NettyRpcClient(serviceCenter);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to initialize RpcClient", e);
@@ -48,8 +53,18 @@ public class ClientProxy implements InvocationHandler {
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
                 .params(args).paramsType(method.getParameterTypes()).build();
+        //数据传输
+        RpcResponse response;
+        //后续添加逻辑：为保持幂等性，只对白名单上的服务进行重试
+        if(serviceCenter.checkRetry(request.getInterfaceName())){
+            //调用retry框架进行重试操作
+            response=new GuavaRetry().sendServiceWithRetry(request,rpcClient);
+        }else{
+            //只调用一次
+            response = rpcClient.sendRequest(request);
+        }
         //IOClient.sendRequest 和服务端进行数据传输
-        RpcResponse response= rpcClient.sendRequest(request);
+        //RpcResponse response= rpcClient.sendRequest(request);
         return response.getData();
     }
 
