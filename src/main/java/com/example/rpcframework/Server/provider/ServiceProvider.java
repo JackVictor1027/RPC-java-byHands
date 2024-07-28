@@ -1,4 +1,5 @@
 package com.example.rpcframework.Server.provider;
+import com.example.rpcframework.Server.ratelimit.provider.RateLimitProvider;
 import com.example.rpcframework.Server.serviceRegister.Impl.ZKServiceRegister;
 import com.example.rpcframework.Server.serviceRegister.ServiceRegister;
 import io.netty.resolver.InetSocketAddressResolver;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 public class ServiceProvider {
     private Map<String, Object> interfaceProvider;
+    private RateLimitProvider rateLimitProvider;
     //注册服务类
     private ServiceRegister serviceRegister;
     private String host;
@@ -19,6 +21,7 @@ public class ServiceProvider {
         this.port=port;
         this.interfaceProvider=new HashMap<>();//map实例化
         this.serviceRegister=new ZKServiceRegister();
+        this.rateLimitProvider=new RateLimitProvider();
     }
 
     //本地注册服务
@@ -39,4 +42,5 @@ public class ServiceProvider {
     public Object getService(String interfaceName){
         return interfaceProvider.get(interfaceName);
     }
+    public RateLimitProvider getRateLimitProvider(){return rateLimitProvider;}
 }

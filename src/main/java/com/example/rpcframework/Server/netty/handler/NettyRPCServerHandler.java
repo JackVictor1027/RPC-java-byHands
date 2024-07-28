@@ -1,6 +1,7 @@
 package com.example.rpcframework.Server.netty.handler;
 
 import com.example.rpcframework.Server.provider.ServiceProvider;
+import com.example.rpcframework.Server.ratelimit.RateLimit;
 import com.example.rpcframework.common.Message.RpcRequest;
 import com.example.rpcframework.common.Message.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,6 +28,13 @@ public class NettyRPCServerHandler extends SimpleChannelInboundHandler<RpcReques
     private RpcResponse getResponse(RpcRequest rpcRequest){
         //得到服务名
         String interfaceName = rpcRequest.getInterfaceName();//TODO:getInterfaceName()方法可以明确地获取到该请求所对应的接口名，从而更加准确地确定要处理的请求类型。
+        //接口限流降级
+        RateLimit rateLimit=serviceProvider.getRateLimitProvider().getRateLimit(interfaceName);
+        if(!rateLimit.getToken()){
+            //如果获取令牌失败，进行限流降级，快速返回结果
+            System.out.println("服务限流");
+            return RpcResponse.fail();
+        }
         //得到服务端相应服务实现类
         Object service = serviceProvider.getService(interfaceName);
         //反射调用方法
