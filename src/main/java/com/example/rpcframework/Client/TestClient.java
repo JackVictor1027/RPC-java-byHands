@@ -12,6 +12,10 @@ public class TestClient {
         UserService proxy=clientProxy.getProxy(UserService.class);
 
         User user = proxy.getUserByUserId(1);
+        user = proxy.getUserByUserId(2);
+        user = proxy.getUserByUserId(3);
+        user = proxy.getUserByUserId(4);
+        user = proxy.getUserByUserId(5);
         System.out.println("从服务端得到的user="+user.toString());
 
         User u=User.builder().id(100).userName("wxx").sex(true).build();
